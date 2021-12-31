@@ -1,5 +1,4 @@
-run := method(contents,
-  writeln(contents)
+Scanner := Object clone do(
 )
 
 runFile := method(path,
@@ -22,6 +21,11 @@ runPrompt := method(
 
   reader close
 )
+
+run := method(contents,
+  writeln(contents)
+)
+
 
 arguments := System args
 nargs := arguments size
