@@ -1,10 +1,18 @@
+# Keeps track of error status
+hadError := false
+
 Scanner := Object clone do(
+  source ::= nil
+  scanTokens := method(
+    return list(1, 2, 3)
+  )
 )
 
 runFile := method(path,
   # Read file contents from a given path and run
   contents := (File openForReading(path)) contents
   run(contents)
+  if(hadError, System exit(65))
 )
 
 runPrompt := method(
@@ -17,15 +25,26 @@ runPrompt := method(
     line := reader readLine
     if(line isNil, break)
     run(line)
+    hadError := false
   )
-
-  reader close
 )
 
-run := method(contents,
-  writeln(contents)
+run := method(source,
+  scanner := Scanner clone do(setSource(source))
+  tokens := scanner scanTokens
+  # Just print scanned tokens for now
+  tokens foreach(token, writeln(token))
 )
 
+error := method(line, msg,
+  report(line, "", msg)
+)
+
+report := method(line, where, msg,
+  File standardError writeln(
+    "[line " .. line .. "] Error" .. where .. ": " .. msg
+  )
+)
 
 arguments := System args
 nargs := arguments size
