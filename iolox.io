@@ -46,6 +46,8 @@ report := method(line, where, msg,
   )
 )
 
+writeln(TokenType LEFT_PAREN)
+
 arguments := System args
 nargs := arguments size
 
