@@ -94,10 +94,10 @@ Scanner := Object clone do(
 
   addToken := method(
     # The 1st argument is always the TokenType.
-    tokenType := call message argAt(0)
+    tokenType := call evalArgAt(0)
     # The 2nd argument (literal) maybe omitted.
     literal := nil
-    if(call message argCount > 1, literal = (call message argAt(1)))
+    if(call argCount > 1, literal = call evalArgAt(1))
 
     text := self source exSlice(self start, self current)
     self tokens append(Token with(tokenType, text, literal, self line))

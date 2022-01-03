@@ -27,7 +27,7 @@ Lox := Object clone do(
     scanner := Scanner with(source)
     tokens := scanner scanTokens
     # Just print scanned tokens for now
-    tokens foreach(token, writeln(token))
+    tokens foreach(token, writeln(token toString))
   )
   
   error := method(line, msg,

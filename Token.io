@@ -14,6 +14,6 @@ Token := Object clone do(
   )
 
   toString := method(
-    (self tokenType) .. (self lexeme) .. (self literal)
+    (self tokenType) .. " " .. (self lexeme) .. " " .. (self literal)
   )
 )
