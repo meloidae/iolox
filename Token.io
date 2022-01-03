@@ -1,10 +1,16 @@
 Token := Object clone do(
+  tokenType := nil
+  lexeme := ""
+  literal := nil
+  line := 0
+
   with := method(tokenType, lexeme, literal, line,
-    self setSlot("tokenType", tokenType)
-    self setSlot("lexeme", lexeme)
-    self setSlot("literal", literal)
-    self setSlot("line", line)
-    self
+    token := self clone
+    token setSlot("tokenType", tokenType)
+    token setSlot("lexeme", lexeme)
+    token setSlot("literal", literal)
+    token setSlot("line", line)
+    token
   )
 
   toString := method(

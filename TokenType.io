@@ -1,4 +1,4 @@
-TokenType do(
+TokenType := Object clone do(
   // Single-character tokens
   LEFT_PAREN := "LEFT_PAREN"
   RIGHT_PAREN := "RIGHT_PAREN"
@@ -10,7 +10,7 @@ TokenType do(
   PLUS := "PLUS"
   SEMICOLON := "SEMICOLON"
   SLASH := "SLASH"
-  START := "START"
+  STAR := "STAR"
 
   // One or two character tokens
   BANG := "BANG"
