@@ -43,7 +43,7 @@ Scanner := Object clone do(
         # Two consecutive '/'s means a comment.
         # A comment goes until the end of the line.
         newline := "\n" at(0)
-        while((self peak != newline) and(self isAtEnd not), self advance),
+        while((self peek != newline) and(self isAtEnd not), self advance),
         # An isolated '/' is a division operator
         self addToken(TokenType SLASH)
       ),
@@ -56,16 +56,36 @@ Scanner := Object clone do(
       # String
       "\"" at(0), self string,
       # Default clause
-      Lox error(self line, "Unexpected character.")
+      if (self isDigit(c),
+        self number,
+        Lox error(self line, "Unexpected character.")
+      )
     )
+  )
+
+  number := method(
+    # Consume consecutive digits.
+    while(self isDigit(self peek),
+      self advance
+    )
+
+    # Look for a fractional part.
+    if (self peek == ("." at(0)) and(self isDigit(self peekNext)),
+      # Consume the '.'
+      self advance
+      # Consume the fractional part
+      while (self isDigit(self peek), self advance)
+    )
+
+    self addToken(TokenType NUMBER, self source exSlice(self start, self current) asNumber)
   )
 
   string := method(
     dquote := "\"" at(0)
     newline := "\n" at(0)
-    # Keep peaking (and advaning) until the closing " is found.
-    while(self peak != dquote and(self isAtEnd not),
-      if(self peak == newline, self line = (self line) + 1)
+    # Keep peeking (and advaning) until the closing " is found.
+    while(self peek != dquote and(self isAtEnd not),
+      if(self peek == newline, self line = (self line) + 1)
       self advance
     )
 
@@ -113,11 +133,21 @@ Scanner := Object clone do(
     true
   )
 
-  peak := method(
+  peek := method(
     # Match a single character without consuming it
     # Return a character code
     if(self isAtEnd, return 0)
     self source at(self current)
+  )
+
+  peekNext := method(
+    if(self current + 1 >= (self source size), return 0)
+    return self source at(self current + 1)
+  )
+
+  isDigit := method(c,
+    # '0' = 48, '9' = 57
+    c >= (48) and(c <= 57)
   )
 )
 
