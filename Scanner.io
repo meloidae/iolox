@@ -4,6 +4,27 @@ Scanner := Object clone do(
   start := 0
   current := 0
   line := 1
+  keywords := nil
+
+  init := method(
+    self keywords := Map clone
+    self keywords atPut("and", TokenType AND)
+    self keywords atPut("class", TokenType CLASS)
+    self keywords atPut("else", TokenType ELSE)
+    self keywords atPut("false", TokenType FALSE)
+    self keywords atPut("for", TokenType FOR)
+    self keywords atPut("fun", TokenType FUN)
+    self keywords atPut("if", TokenType IF)
+    self keywords atPut("nil", TokenType NIL)
+    self keywords atPut("or", TokenType OR)
+    self keywords atPut("print", TokenType PRINT)
+    self keywords atPut("return", TokenType RETURN)
+    self keywords atPut("super", TokenType SUPER)
+    self keywords atPut("this", TokenType THIS)
+    self keywords atPut("true", TokenType TRUE)
+    self keywords atPut("var", TokenType VAR)
+    self keywords atPut("while", TokenType WHILE)
+  )
 
   with := method(source,
     self clone setSource(source)
@@ -56,11 +77,20 @@ Scanner := Object clone do(
       # String
       "\"" at(0), self string,
       # Default clause
-      if (self isDigit(c),
-        self number,
-        Lox error(self line, "Unexpected character.")
+      LoxUtils cond(
+        self isDigit(c), self number,
+        self isAlpha(c), self identifier,
+        true, Lox error(self line, "Unexpected character.")
       )
     )
+  )
+
+  identifier := method(
+    while(self isAlphaNumeric(self peek), self advance)
+    # This identifier is a keyword if it's in the keywords map.
+    text := self source exSlice(self start, self current)
+    tokenType := self keywords at(text, TokenType IDENTIFIER)
+    self addToken(tokenType)
   )
 
   number := method(
@@ -142,12 +172,21 @@ Scanner := Object clone do(
 
   peekNext := method(
     if(self current + 1 >= (self source size), return 0)
-    return self source at(self current + 1)
+    self source at(self current + 1)
+  )
+
+  isAlpha := method(c,
+    # 'a' = 97, 'z' = 122, 'A' = 65, 'Z' = 90, '_' = 95
+    ((c >= 97 and(c <= 122)) or(c >= 65 and(c <= 90))) or(c == 95)
+  )
+
+  isAlphaNumeric := method(c,
+    self isAlpha(c) or(self isDigit(c))
   )
 
   isDigit := method(c,
     # '0' = 48, '9' = 57
-    c >= (48) and(c <= 57)
+    c >= 48 and(c <= 57)
   )
 )
 
