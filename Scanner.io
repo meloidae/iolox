@@ -155,8 +155,8 @@ Scanner := Object clone do(
 
   match := method(expected,
     # Match a single character
-    if(self isAtEnd, return false)
-    if(self source at (self current) != expected, return false)
+    if(self isAtEnd, return(false))
+    if(self source at (self current) != expected, return(false))
 
     # Only move forward when the current character is matches the expected character
     self current = (self current) + 1
@@ -166,12 +166,12 @@ Scanner := Object clone do(
   peek := method(
     # Match a single character without consuming it
     # Return a character code
-    if(self isAtEnd, return 0)
+    if(self isAtEnd, return(0))
     self source at(self current)
   )
 
   peekNext := method(
-    if(self current + 1 >= (self source size), return 0)
+    if(self current + 1 >= (self source size), return(0))
     self source at(self current + 1)
   )
 
