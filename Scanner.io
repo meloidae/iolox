@@ -36,7 +36,7 @@ Scanner := Object clone do(
       self start := (self current)
       self scanToken
     )
-    # Add EOF for clearity
+    # Add EOF for clarity
     self tokens append(Token with(TokenType EOF, "", nil, self line))
   )
 
@@ -65,7 +65,7 @@ Scanner := Object clone do(
         # A comment goes until the end of the line.
         newline := "\n" at(0)
         while((self peek != newline) and(self isAtEnd not), self advance),
-        # An isolated '/' is a division operator
+        # An isolated '/' is a division operator.
         self addToken(TokenType SLASH)
       ),
       # Skip white spaces
