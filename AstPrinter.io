@@ -34,14 +34,14 @@ AstPrinter := Expr Visitor clone do(
   )
 )
 
-expression := Expr Binary with(
-  Expr Unary with(
-    Token with(TokenType MINUS, "-", nil, 1),
-    Expr Literal with(123)
-  ),
-  Token with(TokenType STAR, "*", nil 1),
-  Expr Grouping with(
-    Expr Literal with(45.67)
-  )
-)
-writeln(AstPrinter printExpr(expression))
+# expression := Expr Binary with(
+#   Expr Unary with(
+#     Token with(TokenType MINUS, "-", nil, 1),
+#     Expr Literal with(123)
+#   ),
+#   Token with(TokenType STAR, "*", nil 1),
+#   Expr Grouping with(
+#     Expr Literal with(45.67)
+#   )
+# )
+# writeln(AstPrinter printExpr(expression))
