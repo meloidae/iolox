@@ -189,4 +189,3 @@ Scanner := Object clone do(
     c >= 48 and(c <= 57)
   )
 )
-

@@ -46,7 +46,7 @@ nargs := arguments size
 
 # Print usage and exit if there are too many args
 if (nargs > 2,
-  writeln("Usage: jlox [script]")
+  writeln("Usage: Lox.io [script]")
   System exit(64)
 )
 
