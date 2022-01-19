@@ -26,18 +26,41 @@ Lox := Object clone do(
   run := method(source,
     scanner := Scanner with(source)
     tokens := scanner scanTokens
-    # Just print scanned tokens for now
-    tokens foreach(token, writeln(token toString))
+    # Parse an expression
+    parser := Parser with(tokens)
+    expression := parser parse
+
+    # Stop if there was a syntax error
+    if(self hadError, return)
+
+    writeln(AstPrinter printExpr(expression))
   )
   
-  error := method(line, msg,
+  error := method(arg1, arg2,
+    # Branch to different error functions depending on the type of 1st argument
+    if(arg1 type == Token type,
+      _tokenError(arg1, arg2),
+      _lineError(arg1, arg2)
+    )
+  )
+
+  _tokenError := method(token, msg,
+    if(token tokenType == TokenType EOF,
+      report(token line, " at end", msg),
+      report(token line, " at '" .. (token lexeme) .. "'", msg)
+    )
+  )
+
+  _lineError := method(line, msg,
     report(line, "", msg)
   )
   
   report := method(line, where, msg,
+    # Print error to stderr
     File standardError writeln(
       "[line " .. line .. "] Error" .. where .. ": " .. msg
     )
+    self hadError = true
   )
 )
 
