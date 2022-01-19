@@ -1,5 +1,5 @@
 TokenType := Object clone do(
-  // Single-character tokens
+  # Single-character tokens
   LEFT_PAREN := "LEFT_PAREN"
   RIGHT_PAREN := "RIGHT_PAREN"
   LEFT_BRACE := "LEFT_BRACE"
@@ -12,7 +12,7 @@ TokenType := Object clone do(
   SLASH := "SLASH"
   STAR := "STAR"
 
-  // One or two character tokens
+  # One or two character tokens
   BANG := "BANG"
   BANG_EQUAL := "BANG_EQUAL"
   EQUAL := "EQUAL"
@@ -22,12 +22,12 @@ TokenType := Object clone do(
   LESS := "LESS"
   LESS_EQUAL := "LESS_EQUAL"
 
-  // Literals
+  # Literals
   IDENTIFIER := "IDENTIFIER"
   STRING := "STRING"
   NUMBER := "NUMBER"
 
-  // Keywords
+  # Keywords
   AND := "AND"
   CLASS := "CLASS"
   ELSE := "ELSE"
