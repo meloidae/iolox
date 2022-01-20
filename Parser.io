@@ -15,7 +15,7 @@ Parser := Object clone do(
     )
     e catch(ParserError,
       return nil
-    ) pass
+    ) pass # Call pass for now to catch errors for debugging purposes
     expr
   )
 
