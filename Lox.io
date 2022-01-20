@@ -9,8 +9,8 @@ Lox := Object clone do(
     contents := (File openForReading(path)) contents
     run(contents)
     # Indicate an error in the exit code
-    if(self, hadError, System exit(65))
-    if(self, hadRuntimeError, System exit(70))
+    if(self hadError, System exit(65))
+    if(self hadRuntimeError, System exit(70))
   )
   
   runPrompt := method(

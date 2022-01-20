@@ -107,7 +107,7 @@ Interpreter := Expr Visitor clone do(
   )
 
   isEqual := method(a, b,
-    # iolang let's you compare nil like any other object, so this is fine
+    # iolang lets you compare nil like any other object, so this is fine
     a == b
   )
 
