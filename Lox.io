@@ -1,12 +1,16 @@
 Lox := Object clone do(
+  interpreter := Interpreter clone
   # Keeps track of error status
   hadError := false
+  hadRuntimeError := false
   
   runFile := method(path,
     # Read file contents from a given path and run
     contents := (File openForReading(path)) contents
     run(contents)
-    if(hadError, System exit(65))
+    # Indicate an error in the exit code
+    if(self, hadError, System exit(65))
+    if(self, hadRuntimeError, System exit(70))
   )
   
   runPrompt := method(
@@ -33,7 +37,7 @@ Lox := Object clone do(
     # Stop if there was a syntax error
     if(self hadError, return)
 
-    writeln(AstPrinter printExpr(expression))
+    self interpreter interpret(expression)
   )
   
   error := method(arg1, arg2,
@@ -53,6 +57,14 @@ Lox := Object clone do(
 
   _lineError := method(line, msg,
     report(line, "", msg)
+  )
+
+  runtimeError := method(err,
+    # Print runtime error to stderr
+    File standardError writeln(
+      (err msg) .. "\n[line " .. (err token line) .. "]"
+    )
+    self hadRuntimeError := true
   )
   
   report := method(line, where, msg,
