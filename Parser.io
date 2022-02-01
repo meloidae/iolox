@@ -19,7 +19,7 @@ Parser := Object clone do(
   )
 
   expression := method(
-    self equality
+    self assignment
   )
 
   declaration := method(
@@ -68,6 +68,25 @@ Parser := Object clone do(
     expr := self expression
     self consume(TokenType SEMICOLON, "Expect ';' after expression.")
     Stmt Expression with(expr)
+  )
+
+  # assignment -> IDENTIFIER "=" assignment | equality
+  assignment := method(
+    expr := self equality
+
+    if(self match(TokenType EQUAL),
+      equals := self previous
+      value := self assignment
+
+      if(expr type == (Expr Variable type),
+        name := expr name
+        return(Expr Assign with(name, value))
+      )
+
+      self error(equals, "Invalud assignment target.")
+    )
+
+    expr
   )
 
   # equality -> comparison ( ( "!=" | "==" ) comparison )* ;
