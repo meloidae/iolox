@@ -3,6 +3,8 @@ Interpreter := Object clone do(
   appendProto(Expr Visitor)
   appendProto(Stmt Visitor)
 
+  environment := Environment clone
+
   interpret := method(statements,
     # Run a list of statements and report any error
     e := try(
@@ -32,6 +34,21 @@ Interpreter := Object clone do(
   visitPrintStmt := method(stmt,
     value := self evaluate(stmt expression)
     writeln(self stringify(value))
+  )
+
+  visitVarStmt := method(stmt,
+    value := nil # The value is set to nil if it's not explicitly initialized
+    if(stmt initializer != nil,
+      value = self evaluate(stmt initializer)
+    )
+
+    self environment define(stmt name lexeme, value)
+  )
+
+  visitAssignExpr := method(expr,
+    value := self evaluate(expr value)
+    self environment assign(expr name, value)
+    value
   )
 
   # Expr interface methods
@@ -109,6 +126,10 @@ Interpreter := Object clone do(
 
     # Should be unreachable
     nil
+  )
+
+  visitVariableExpr := method(expr,
+    self environment get(expr name)
   )
 
   checkNumberOperand := method(operator, operand,
