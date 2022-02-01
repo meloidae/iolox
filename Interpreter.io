@@ -3,7 +3,7 @@ Interpreter := Object clone do(
   appendProto(Expr Visitor)
   appendProto(Stmt Visitor)
 
-  environment := Environment clone
+  environment := Environment with
 
   interpret := method(statements,
     # Run a list of statements and report any error
