@@ -71,6 +71,7 @@ outputDir := args at(1)
 # Expression
 defineAst(outputDir, "Expr",
   list(
+    "Assign   : name, value",
     "Binary   : left, operator, right",
     "Grouping : expression",
     "Literal  : value",
