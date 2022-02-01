@@ -4,6 +4,7 @@ Expr := Object clone do(
     visitGroupingExpr := method(Exception raise("visitGroupingExpr is unimplemented"))
     visitLiteralExpr := method(Exception raise("visitLiteralExpr is unimplemented"))
     visitUnaryExpr := method(Exception raise("visitUnaryExpr is unimplemented"))
+    visitVariableExpr := method(Exception raise("visitVariableExpr is unimplemented"))
   )
   Binary := lazySlot(
     Expr clone do(
@@ -60,6 +61,19 @@ Expr := Object clone do(
       )
     )
   )
+  Variable := lazySlot(
+    Expr clone do(
+      with := method(name,
+        t := self clone
+        t setSlot("name", name)
 
-  accept := method(Expception raise("accept() is unimplemented"))
+        t accept = method(visitor,
+          visitor visitVariableExpr(self)
+        )
+        t
+      )
+    )
+  )
+
+  accept := method(Exception raise("accept() is unimplemented"))
 )

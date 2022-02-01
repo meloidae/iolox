@@ -10,17 +10,64 @@ Parser := Object clone do(
   )
 
   parse := method(
-    e := try(
-      expr := self expression
+    statements := list()
+    while(self isAtEnd not,
+      statements append(self declaration)
     )
-    e catch(ParserError,
-      return nil
-    ) pass # Call pass for now to catch errors for debugging purposes
-    expr
+
+    statements
   )
 
   expression := method(
     self equality
+  )
+
+  declaration := method(
+    ret := nil
+    e := try(
+      if(self match(TokenType VAR),
+        ret = self varDeclaration
+        return
+      )
+      ret = self statement
+    )
+
+    e catch(ParseError,
+      self synchronize
+      ret = nil
+    ) pass # Reraise any error that's not a ParseError
+    ret
+  )
+
+  statement := method(
+    if(self match(TokenType PRINT), return(self printStatement))
+
+    # Anything that's not a print stmt is an expression stmt
+    self expressionStatement
+  )
+
+  printStatement := method(
+    value := self expression
+    self consume(TokenType SEMICOLON, "Expect ';' after value.")
+    Stmt Print with(value)
+  )
+
+  varDeclaration := method(
+    name := self consume(TokenType IDENTIFIER, "Expect variable name")
+
+    initializer := nil
+    if(self match(TokenType EQUAL),
+      initializer = self expression
+    )
+
+    self consume(TokenType SEMICOLON, "Expect ';' after vaiable declaration")
+    Stmt Var with(name, initializer)
+  )
+
+  expressionStatement := method(
+    expr := self expression
+    self consume(TokenType SEMICOLON, "Expect ';' after expression.")
+    Stmt Expression with(expr)
   )
 
   # equality -> comparison ( ( "!=" | "==" ) comparison )* ;
@@ -85,6 +132,10 @@ Parser := Object clone do(
 
     if(self match(TokenType NUMBER, TokenType STRING),
       return(Expr Literal with(self previous literal))
+    )
+
+    if(self match(TokenType IDENTIFIER),
+      return(Expr Variable with(self previous))
     )
 
     if(self match(TokenType LEFT_PAREN),

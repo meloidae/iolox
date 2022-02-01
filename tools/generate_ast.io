@@ -17,7 +17,7 @@ defineAst := method(outputDir, baseName, types,
 
   # Base accept method
   writer write("\n")
-  writer write("  accept := method(Expception raise(\"accept() is unimplemented\"))", "\n")
+  writer write("  accept := method(Exception raise(\"accept() is unimplemented\"))", "\n")
 
   writer write(")", "\n")
   writer close
@@ -68,11 +68,22 @@ if(args size != 2,
 )
 
 outputDir := args at(1)
+# Expression
 defineAst(outputDir, "Expr",
   list(
     "Binary   : left, operator, right",
     "Grouping : expression",
     "Literal  : value",
-    "Unary    : operator, right"
+    "Unary    : operator, right",
+    "Variable : name"
+  )
+)
+
+# Statement
+defineAst(outputDir, "Stmt",
+  list(
+    "Expression : expression",
+    "Print      : expression",
+    "Var        : name, initializer"
   )
 )

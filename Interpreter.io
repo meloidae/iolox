@@ -1,19 +1,40 @@
-Interpreter := Expr Visitor clone do(
-  interpret := method(expr,
+Interpreter := Object clone do(
+  # Interfaces
+  appendProto(Expr Visitor)
+  appendProto(Stmt Visitor)
+
+  interpret := method(statements,
+    # Run a list of statements and report any error
     e := try(
-      value := self evaluate(expr)
-      writeln(self stringify(value))
+      statements foreach(statement,
+        self execute(statement)
+      )
     )
 
     e catch(RuntimeError,
       Lox runtimeError(e)
-    ) pass # Call pass for debugging
+    ) pass # Reraise any erorr that's not a RuntimeError
   )
 
   evaluate := method(expr,
     expr accept(self)
   )
 
+  execute := method(stmt,
+    stmt accept(self)
+  )
+
+  # Stmt interface methods
+  visitExpressionStmt := method(stmt,
+    self evaluate(stmt)
+  )
+
+  visitPrintStmt := method(stmt,
+    value := self evaluate(stmt expression)
+    writeln(self stringify(value))
+  )
+
+  # Expr interface methods
   visitBinaryExpr := method(expr,
     left := self evaluate(expr left)
     right := self evaluate(expr right)

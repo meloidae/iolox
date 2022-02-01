@@ -30,14 +30,14 @@ Lox := Object clone do(
   run := method(source,
     scanner := Scanner with(source)
     tokens := scanner scanTokens
-    # Parse an expression
+    # Parse statements
     parser := Parser with(tokens)
-    expression := parser parse
+    statements := parser parse
 
     # Stop if there was a syntax error
     if(self hadError, return)
 
-    self interpreter interpret(expression)
+    self interpreter interpret(statements)
   )
   
   error := method(arg1, arg2,
