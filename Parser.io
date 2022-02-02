@@ -22,6 +22,7 @@ Parser := Object clone do(
     self assignment
   )
 
+  # declaration -> varDecl | statement ;
   declaration := method(
     ret := nil
     e := try(
@@ -39,6 +40,7 @@ Parser := Object clone do(
     ret
   )
 
+  # statement -> exprStmt | printStmt ;
   statement := method(
     if(self match(TokenType PRINT), return(self printStatement))
 
@@ -46,12 +48,14 @@ Parser := Object clone do(
     self expressionStatement
   )
 
+  # printStmt -> "print" expression ";" ;
   printStatement := method(
     value := self expression
     self consume(TokenType SEMICOLON, "Expect ';' after value.")
     Stmt Print with(value)
   )
 
+  # varDecl -> "var" IDENTIFIER ( "=" expression )? ";" ;
   varDeclaration := method(
     name := self consume(TokenType IDENTIFIER, "Expect variable name")
 
@@ -64,13 +68,14 @@ Parser := Object clone do(
     Stmt Var with(name, initializer)
   )
 
+  # exprStmt -> expression ";" ;
   expressionStatement := method(
     expr := self expression
     self consume(TokenType SEMICOLON, "Expect ';' after expression.")
     Stmt Expression with(expr)
   )
 
-  # assignment -> IDENTIFIER "=" assignment | equality
+  # assignment -> IDENTIFIER "=" assignment | equality ;
   assignment := method(
     expr := self equality
 
@@ -143,7 +148,7 @@ Parser := Object clone do(
     self primary
   )
 
-  # primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+  # primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
   primary := method(
     if(self match(TokenType FALSE), return(Expr Literal with(false)))
     if(self match(TokenType TRUE), return(Expr Literal with(true)))
