@@ -90,6 +90,7 @@ defineAst(outputDir, "Stmt",
     "Expression : expression",
     "If         : condition, thenBranch, elseBranch",
     "Print      : expression",
-    "Var        : name, initializer"
+    "Var        : name, initializer",
+    "While      : condition, body"
   )
 )
