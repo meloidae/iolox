@@ -2,6 +2,7 @@ Stmt := Object clone do(
   Visitor := Object clone do(
     visitBlockStmt := method(Exception raise("visitBlockStmt is unimplemented"))
     visitExpressionStmt := method(Exception raise("visitExpressionStmt is unimplemented"))
+    visitIfStmt := method(Exception raise("visitIfStmt is unimplemented"))
     visitPrintStmt := method(Exception raise("visitPrintStmt is unimplemented"))
     visitVarStmt := method(Exception raise("visitVarStmt is unimplemented"))
   )
@@ -26,6 +27,21 @@ Stmt := Object clone do(
 
         t accept = method(visitor,
           visitor visitExpressionStmt(self)
+        )
+        t
+      )
+    )
+  )
+  If := lazySlot(
+    Stmt clone do(
+      with := method(condition, thenBranch, elseBranch,
+        t := self clone
+        t setSlot("condition", condition)
+        t setSlot("thenBranch", thenBranch)
+        t setSlot("elseBranch", elseBranch)
+
+        t accept = method(visitor,
+          visitor visitIfStmt(self)
         )
         t
       )
