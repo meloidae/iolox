@@ -41,15 +41,60 @@ Parser := Object clone do(
     ret
   )
 
-  # statement -> exprStmt | ifStmt | printStmt | whileStmt | block ;
+  # statement -> exprStmt | forStmt | ifStmt | printStmt | whileStmt | block ;
   statement := method(
+    if(self match(TokenType FOR), return(self forStatement))
     if(self match(TokenType IF), return(self ifStatement))
     if(self match(TokenType PRINT), return(self printStatement))
-    if(self match(TokenType WHILE), return(self whilteStatement))
+    if(self match(TokenType WHILE), return(self whileStatement))
     if(self match(TokenType LEFT_BRACE), return(Stmt Block with(self codeBlock)))
 
     # Anything that's not a print stmt is an expression stmt
     self expressionStatement
+  )
+
+  # forStmt -> "for" "(" ( varDecl | exprStmt | ";" ) expression? ";" expression? ")" statement ;
+  forStatement := method(
+    self consume(TokenType LEFT_PAREN, "Expect '(' after 'for'.")
+
+    initializer := nil
+    if(self match(TokenType SEMICOLON)) then(
+      initializer = nil
+    ) elseif(self match(TokenType VAR)) then(
+      initializer = self varDeclaration
+    ) else(
+      initializer = self expressionStatement
+    )
+
+    condition := nil
+    if(self check(TokenType SEMICOLON) not,
+      condition = self expression
+    )
+    self consume(TokenType SEMICOLON, "Expect ';' after loop condition.")
+
+    increment := nil
+    if(self check(TokenType RIGHT_PAREN) not,
+      increment = self expression
+    )
+    self consume(TokenType RIGHT_PAREN, "Expect ')' after for clauses.")
+    body := self statement
+
+    # Start of desugaring
+    # Body statements followed by increment
+    if(increment != nil, 
+      body = Stmt Block with(list(body, Stmt Expression with(increment)))
+    )
+
+    # Wrap body with a conditional loop
+    if(condition == nil, condition = Expr Literal with(true))
+    body = Stmt While with(condition, body)
+
+    # Seal the body in a new block with an intializer if there is one
+    if(initializer != nil,
+      body = Stmt Block with(list(initializer, body))
+    )
+
+    body
   )
 
   # ifStmt -> "if" "(" expression ")" statement ( "else" statement )? ;

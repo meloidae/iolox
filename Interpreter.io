@@ -78,13 +78,13 @@ Interpreter := Object clone do(
     )
   )
 
+  # Expr interface methods
   visitAssignExpr := method(expr,
     value := self evaluate(expr value)
     self environment assign(expr name, value)
     value
   )
 
-  # Expr interface methods
   visitBinaryExpr := method(expr,
     left := self evaluate(expr left)
     right := self evaluate(expr right)
