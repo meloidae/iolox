@@ -50,6 +50,14 @@ Interpreter := Object clone do(
     self evaluate(stmt)
   )
 
+  visitIfStmt := method(stmt,
+    if(self isTruthy(self evaluate(stmt condition))) then(
+      self execute(stmt thenBranch)
+    ) elseif(stmt elseBranch != nil) then(
+      self execute(stmt elseBranch)
+    )
+  )
+
   visitPrintStmt := method(stmt,
     value := self evaluate(stmt expression)
     writeln(self stringify(value))
