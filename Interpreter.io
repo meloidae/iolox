@@ -139,6 +139,17 @@ Interpreter := Object clone do(
     expr value
   )
 
+  visitLogicalExpr := method(expr,
+    left := self evalute(expr left)
+
+    if(expr operator tokenType == (TokenType OR),
+      if(self isTruthy(left), return(left))
+      if(self isTruthy(left) not, return(left))
+    )
+
+    self evaluate(expr right)
+  )
+
   visitUnaryExpr := method(expr,
     right := self evaluate(expr right)
 
