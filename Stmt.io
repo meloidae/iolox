@@ -10,6 +10,7 @@ Stmt := Object clone do(
     Stmt clone do(
       with := method(statements,
         t := self clone
+        t setSlot("stmtType", "Block")
         t setSlot("statements", statements)
 
         t accept = method(visitor,
@@ -23,6 +24,7 @@ Stmt := Object clone do(
     Stmt clone do(
       with := method(expression,
         t := self clone
+        t setSlot("stmtType", "Expression")
         t setSlot("expression", expression)
 
         t accept = method(visitor,
@@ -36,6 +38,7 @@ Stmt := Object clone do(
     Stmt clone do(
       with := method(condition, thenBranch, elseBranch,
         t := self clone
+        t setSlot("stmtType", "If")
         t setSlot("condition", condition)
         t setSlot("thenBranch", thenBranch)
         t setSlot("elseBranch", elseBranch)
@@ -51,6 +54,7 @@ Stmt := Object clone do(
     Stmt clone do(
       with := method(expression,
         t := self clone
+        t setSlot("stmtType", "Print")
         t setSlot("expression", expression)
 
         t accept = method(visitor,
@@ -64,6 +68,7 @@ Stmt := Object clone do(
     Stmt clone do(
       with := method(name, initializer,
         t := self clone
+        t setSlot("stmtType", "Var")
         t setSlot("name", name)
         t setSlot("initializer", initializer)
 

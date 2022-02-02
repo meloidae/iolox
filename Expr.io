@@ -12,6 +12,7 @@ Expr := Object clone do(
     Expr clone do(
       with := method(name, value,
         t := self clone
+        t setSlot("exprType", "Assign")
         t setSlot("name", name)
         t setSlot("value", value)
 
@@ -26,6 +27,7 @@ Expr := Object clone do(
     Expr clone do(
       with := method(left, operator, right,
         t := self clone
+        t setSlot("exprType", "Binary")
         t setSlot("left", left)
         t setSlot("operator", operator)
         t setSlot("right", right)
@@ -41,6 +43,7 @@ Expr := Object clone do(
     Expr clone do(
       with := method(expression,
         t := self clone
+        t setSlot("exprType", "Grouping")
         t setSlot("expression", expression)
 
         t accept = method(visitor,
@@ -54,6 +57,7 @@ Expr := Object clone do(
     Expr clone do(
       with := method(value,
         t := self clone
+        t setSlot("exprType", "Literal")
         t setSlot("value", value)
 
         t accept = method(visitor,
@@ -67,6 +71,7 @@ Expr := Object clone do(
     Expr clone do(
       with := method(left, operator, right,
         t := self clone
+        t setSlot("exprType", "Logical")
         t setSlot("left", left)
         t setSlot("operator", operator)
         t setSlot("right", right)
@@ -82,6 +87,7 @@ Expr := Object clone do(
     Expr clone do(
       with := method(operator, right,
         t := self clone
+        t setSlot("exprType", "Unary")
         t setSlot("operator", operator)
         t setSlot("right", right)
 
@@ -96,6 +102,7 @@ Expr := Object clone do(
     Expr clone do(
       with := method(name,
         t := self clone
+        t setSlot("exprType", "Variable")
         t setSlot("name", name)
 
         t accept = method(visitor,
