@@ -85,6 +85,7 @@ defineAst(outputDir, "Stmt",
   list(
     "Block      : statements",
     "Expression : expression",
+    "If         : condition, thenBranch, elseBranch",
     "Print      : expression",
     "Var        : name, initializer"
   )
