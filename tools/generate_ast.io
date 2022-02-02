@@ -42,6 +42,8 @@ defineType := method(writer, baseName, className, fieldList,
   # Define with method (constructor)
   writer write("      with := method(" .. fieldList .. ",", "\n")
   writer write("        t := self clone", "\n")
+  # Define subtype
+  writer write("        t setSlot(\"" .. (baseName asLowercase) .. "Type\", \"" .. className .. "\")", "\n")
   # Strore parameters in slots
   fields := fieldList split(",")
   fields foreach(value,
