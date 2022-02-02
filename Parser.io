@@ -36,7 +36,7 @@ Parser := Object clone do(
     e catch(ParserError,
       self synchronize
       ret = nil
-    ) pass # Reraise any error that's not a ParseError
+    ) pass # Reraise any error that's not a ParserError
     ret
   )
 
