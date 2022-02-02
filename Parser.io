@@ -18,6 +18,7 @@ Parser := Object clone do(
     statements
   )
 
+  # expression -> assignment ;
   expression := method(
     self assignment
   )
@@ -103,9 +104,9 @@ Parser := Object clone do(
     statements
   )
 
-  # assignment -> IDENTIFIER "=" assignment | equality ;
+  # assignment -> IDENTIFIER "=" assignment | logic_or ;
   assignment := method(
-    expr := self equality
+    expr := self logicalOr
 
     if(self match(TokenType EQUAL),
       equals := self previous
@@ -117,6 +118,31 @@ Parser := Object clone do(
       )
 
       self error(equals, "Invalud assignment target.")
+    )
+
+    expr
+  )
+
+  # logic_or -> logic_and | ( "or" logic_and )* ;
+  logicalOr := method(
+    expr := self logicalAnd
+
+    while(self match(TokenType OR),
+      operator := self previous
+      right := self logicalAnd
+      expr = Expr Logical with(expr, operator, right)
+    )
+
+    expr
+  )
+
+  # logic_and -> equality | ( "and" equality )* ;
+  logicalAnd := method(
+    expr := self equality
+    while(self match(TokenType AND),
+      operator := self previous
+      right := self equality
+      expr = Expr Logical with(expr, operator, right)
     )
 
     expr
