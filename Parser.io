@@ -40,13 +40,29 @@ Parser := Object clone do(
     ret
   )
 
-  # statement -> exprStmt | printStmt | block ;
+  # statement -> exprStmt | ifStmt | printStmt | block ;
   statement := method(
+    if(self match(TokenType IF), return(self ifStatement))
     if(self match(TokenType PRINT), return(self printStatement))
     if(self match(TokenType LEFT_BRACE), return(Stmt Block with(self codeBlock)))
 
     # Anything that's not a print stmt is an expression stmt
     self expressionStatement
+  )
+
+  # ifStmt -> "if" "(" expression ")" statement ( "else" statement )? ;
+  ifStatement := method(
+    self consume(TokenType LEFT_PAREN, "Expect '(' after 'if'.")
+    condition := self expression
+    self consume(TokenType RIGHT_PAREN, "Expect ')' after if condition.")
+    
+    thenBranch := self statement
+    elseBranch := nil
+    if(self match(TokenType ELSE),
+      elseBranch = self statement
+    )
+
+    Stmt If with(condition, thenBranch, elseBranch)
   )
 
   # printStmt -> "print" expression ";" ;
