@@ -41,10 +41,11 @@ Parser := Object clone do(
     ret
   )
 
-  # statement -> exprStmt | ifStmt | printStmt | block ;
+  # statement -> exprStmt | ifStmt | printStmt | whileStmt | block ;
   statement := method(
     if(self match(TokenType IF), return(self ifStatement))
     if(self match(TokenType PRINT), return(self printStatement))
+    if(self match(TokenType WHILE), return(self whilteStatement))
     if(self match(TokenType LEFT_BRACE), return(Stmt Block with(self codeBlock)))
 
     # Anything that's not a print stmt is an expression stmt
@@ -84,6 +85,16 @@ Parser := Object clone do(
 
     self consume(TokenType SEMICOLON, "Expect ';' after vaiable declaration")
     Stmt Var with(name, initializer)
+  )
+
+  # whileStmt -> "while" "(" expression ")" statement ;
+  whileStatement := method(
+    self consume(TokenType LEFT_PAREN, "Expect '(' after 'while'.")
+    condition := self expression
+    self consume(TokenType RIGHT_PAREN, "Expect ')' after condition.")
+    body := self statement
+
+    Stmt While with(condition, body)
   )
 
   # exprStmt -> expression ";" ;
