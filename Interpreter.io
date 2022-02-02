@@ -26,7 +26,26 @@ Interpreter := Object clone do(
     stmt accept(self)
   )
 
+  executeBlock := method(statements, env,
+    previous := self environment
+    e := try(
+      self environment := env
+
+      statements foreach(statement,
+        self execute(statement)
+      )
+    )
+    e catch(
+      e print
+    )
+    self environment = previous
+  )
+
   # Stmt interface methods
+  visitBlockStmt := method(stmt,
+    self executeBlock(stmt statements, Environment with(self environment))
+  )
+
   visitExpressionStmt := method(stmt,
     self evaluate(stmt)
   )
