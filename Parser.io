@@ -112,7 +112,7 @@ Parser := Object clone do(
       equals := self previous
       value := self assignment
 
-      if(expr type == (Expr Variable type),
+      if(expr exprType == "Variable",
         name := expr name
         return(Expr Assign with(name, value))
       )
