@@ -47,7 +47,7 @@ Interpreter := Object clone do(
   )
 
   visitExpressionStmt := method(stmt,
-    self evaluate(stmt)
+    self evaluate(stmt expression)
   )
 
   visitIfStmt := method(stmt,
