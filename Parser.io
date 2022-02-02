@@ -33,16 +33,17 @@ Parser := Object clone do(
       ret = self statement
     )
 
-    e catch(ParseError,
+    e catch(ParserError,
       self synchronize
       ret = nil
     ) pass # Reraise any error that's not a ParseError
     ret
   )
 
-  # statement -> exprStmt | printStmt ;
+  # statement -> exprStmt | printStmt | block ;
   statement := method(
     if(self match(TokenType PRINT), return(self printStatement))
+    if(self match(TokenType LEFT_BRACE), return(Stmt Block with(self codeBlock)))
 
     # Anything that's not a print stmt is an expression stmt
     self expressionStatement
@@ -73,6 +74,17 @@ Parser := Object clone do(
     expr := self expression
     self consume(TokenType SEMICOLON, "Expect ';' after expression.")
     Stmt Expression with(expr)
+  )
+
+  # block -> "{" declaration* "}" ;
+  codeBlock := method(
+    statements := list()
+    while(self check(TokenType RIGHT_BRACE) not and(self isAtEnd not),
+      statements append(self declaration)
+    )
+
+    self consume(TokenType RIGHT_BRACE, "Expect '}' after block.")
+    statements
   )
 
   # assignment -> IDENTIFIER "=" assignment | equality ;
