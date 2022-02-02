@@ -1,8 +1,22 @@
 Stmt := Object clone do(
   Visitor := Object clone do(
+    visitBlockStmt := method(Exception raise("visitBlockStmt is unimplemented"))
     visitExpressionStmt := method(Exception raise("visitExpressionStmt is unimplemented"))
     visitPrintStmt := method(Exception raise("visitPrintStmt is unimplemented"))
     visitVarStmt := method(Exception raise("visitVarStmt is unimplemented"))
+  )
+  Block := lazySlot(
+    Stmt clone do(
+      with := method(statements,
+        t := self clone
+        t setSlot("statements", statements)
+
+        t accept = method(visitor,
+          visitor visitBlockStmt(self)
+        )
+        t
+      )
+    )
   )
   Expression := lazySlot(
     Stmt clone do(
