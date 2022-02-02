@@ -83,6 +83,7 @@ defineAst(outputDir, "Expr",
 # Statement
 defineAst(outputDir, "Stmt",
   list(
+    "Block      : statements",
     "Expression : expression",
     "Print      : expression",
     "Var        : name, initializer"
