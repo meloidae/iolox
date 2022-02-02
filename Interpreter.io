@@ -72,6 +72,12 @@ Interpreter := Object clone do(
     self environment define(stmt name lexeme, value)
   )
 
+  visitWhileStmt := method(stmt,
+    while(self isTruthy(self evaluate(stmt condition)),
+      self execute(stmt body)
+    )
+  )
+
   visitAssignExpr := method(expr,
     value := self evaluate(expr value)
     self environment assign(expr name, value)
