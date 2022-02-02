@@ -5,6 +5,7 @@ Stmt := Object clone do(
     visitIfStmt := method(Exception raise("visitIfStmt is unimplemented"))
     visitPrintStmt := method(Exception raise("visitPrintStmt is unimplemented"))
     visitVarStmt := method(Exception raise("visitVarStmt is unimplemented"))
+    visitWhileStmt := method(Exception raise("visitWhileStmt is unimplemented"))
   )
   Block := lazySlot(
     Stmt clone do(
@@ -74,6 +75,21 @@ Stmt := Object clone do(
 
         t accept = method(visitor,
           visitor visitVarStmt(self)
+        )
+        t
+      )
+    )
+  )
+  While := lazySlot(
+    Stmt clone do(
+      with := method(condition, body,
+        t := self clone
+        t setSlot("stmtType", "While")
+        t setSlot("condition", condition)
+        t setSlot("body", body)
+
+        t accept = method(visitor,
+          visitor visitWhileStmt(self)
         )
         t
       )
