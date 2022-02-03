@@ -23,10 +23,14 @@ Parser := Object clone do(
     self assignment
   )
 
-  # declaration -> varDecl | statement ;
+  # declaration -> funDecl | varDecl | statement ;
   declaration := method(
     ret := nil
     e := try(
+      if(self match(TokenType FUN),
+        ret = self function("function")
+        return
+      )
       if(self match(TokenType VAR),
         ret = self varDeclaration
         return
@@ -147,6 +151,30 @@ Parser := Object clone do(
     expr := self expression
     self consume(TokenType SEMICOLON, "Expect ';' after expression.")
     Stmt Expression with(expr)
+  )
+
+  # function -> IDENTIFIER "(" parameters? ")" block ;
+  function := method(kind,
+    # Parse function name and parameters
+    name := self consume(TokenType IDENTIFIER, "Expect " .. kind .. " name.")
+    self consume(TokenType LEFT_PAREN, "Expect '(' after " .. kind .. " name.")
+    parameters := list()
+    if(self check(TokenType RIGHT_PAREN) not,
+      loop(
+        if(parameters size >= 255,
+          self error(self peek, "Can't have more than 255 parameters")
+        )
+
+        parameters append(self consume(TokenType IDENTIFIER, "Expect parameter name."))
+        if(self match(TokenType COMMA) not, break)
+      )
+    )
+    self consume(TokenType RIGHT_PAREN, "Expect ')' after parameters.")
+
+    # Parse function body
+    self consume(TokenType LEFT_BRACE, "Expect '{' before " .. kind .. " body.")
+    body := self codeBlock
+    Stmt Function with(name, parameters, body)
   )
 
   # block -> "{" declaration* "}" ;
