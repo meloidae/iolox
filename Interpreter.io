@@ -3,7 +3,23 @@ Interpreter := Object clone do(
   appendProto(Expr Visitor)
   appendProto(Stmt Visitor)
 
-  environment := Environment with
+  globals := Environment with
+  environment := globals
+
+  init := method(
+    self globals define("clock",
+      LoxCallable clone do(
+        arity := 0
+
+        doCall := method(interpreter, arguments,
+          # Date as seconds since 1970 UTC
+          Data asNumber
+        )
+
+        asString := "<native fn>"
+      )
+    )
+  )
 
   interpret := method(statements,
     # Run a list of statements and report any error
