@@ -248,14 +248,45 @@ Parser := Object clone do(
     expr
   )
 
-  # unary -> ( "!" | "-" ) unary | primary ;
+  # unary -> ( "!" | "-" ) unary | call ;
   unary := method(
     if(self match(TokenType BANG, TokenType MINUS),
       operator := self previous
       right := self unary
       return(Expr Unary with(operator, right))
     )
-    self primary
+    self funCall
+  )
+
+  finishCall := method(callee,
+    arguments := list()
+    if(self check(RIGHT_PAREN) not,
+      loop(
+        if(arguments size >= 255,
+          self error(self peek, "Can't have more than 255 arguments")
+        )
+        arguments append(self expression)
+        if(self match(TokenType COMMA) not, break)
+      )
+    )
+
+    paren := self consume(TokenType RIGHT_PAREN, "Expect ')' after arguments.")
+
+    Expr Call with(callee, paren, arguments)
+  )
+
+  # call -> primary ( "(" arguments? ")" )* ;
+  funCall := method(
+    expr := self primary
+
+    loop(
+      if(self match(TokenType LEFT_PAREN),
+        expr = self finishCall(expr),
+        break
+      )
+    )
+
+    expr
   )
 
   # primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" | IDENTIFIER ;
