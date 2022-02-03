@@ -290,7 +290,7 @@ Parser := Object clone do(
 
   finishCall := method(callee,
     arguments := list()
-    if(self check(RIGHT_PAREN) not,
+    if(self check(TokenType RIGHT_PAREN) not,
       loop(
         if(arguments size >= 255,
           self error(self peek, "Can't have more than 255 arguments")
