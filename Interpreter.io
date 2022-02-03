@@ -3,10 +3,8 @@ Interpreter := Object clone do(
   appendProto(Expr Visitor)
   appendProto(Stmt Visitor)
 
-  globals := Environment with
-  environment := globals
-
   init := method(
+    self globals := Environment with
     self globals define("clock",
       LoxCallable clone do(
         arity := 0
@@ -19,6 +17,7 @@ Interpreter := Object clone do(
         asString := "<native fn>"
       )
     )
+    self environment := self globals
   )
 
   interpret := method(statements,
@@ -42,10 +41,10 @@ Interpreter := Object clone do(
     stmt accept(self)
   )
 
-  executeBlock := method(statements, env,
+  executeBlock := method(statements, givenEnv,
     previous := self environment
     e := try(
-      self environment := env
+      self environment := givenEnv
 
       statements foreach(statement,
         self execute(statement)
@@ -64,6 +63,11 @@ Interpreter := Object clone do(
 
   visitExpressionStmt := method(stmt,
     self evaluate(stmt expression)
+  )
+
+  visitFunctionStmt := method(stmt,
+    function := LoxFunction with(stmt)
+    self environment define(stmt name lexeme, function)
   )
 
   visitIfStmt := method(stmt,
@@ -157,7 +161,7 @@ Interpreter := Object clone do(
 
     arguments := list()
     expr arguments foreach(argument,
-      arguments append(argument)
+      arguments append(self evaluate(argument))
     )
 
     if(callee hasProto(LoxCallable) not,
