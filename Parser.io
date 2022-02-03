@@ -153,7 +153,9 @@ Parser := Object clone do(
     Stmt Expression with(expr)
   )
 
+  # funDecl -> "fun" function ;
   # function -> IDENTIFIER "(" parameters? ")" block ;
+  # parameters -> IDENTIFIER ( "," IDENTIFIER )* ;
   function := method(kind,
     # Parse function name and parameters
     name := self consume(TokenType IDENTIFIER, "Expect " .. kind .. " name.")
