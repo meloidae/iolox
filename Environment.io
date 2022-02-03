@@ -1,16 +1,16 @@
 Environment := Object clone do(
   enclosing := nil
   # Initialize an empty Map
-  values := Map with
+  values := nil
 
   with := method(
-    if(call argCount > 1,
+    env := self clone
+    env setSlot("values", Map with)
+    if(call argCount >= 1,
       enclosingEnv := call evalArgAt(0)
-      env := self clone
       env setSlot("enclosing", enclosingEnv)
-      return(env)
     )
-    return(self clone)
+    return(env)
   )
 
   get := method(name,
