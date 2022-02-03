@@ -13,7 +13,7 @@ Token := Object clone do(
     token
   )
 
-  toString := method(
+  asString := method(
     (self tokenType) .. " " .. (self lexeme) .. " " .. (self literal)
   )
 )
