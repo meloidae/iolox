@@ -136,7 +136,28 @@ Interpreter := Object clone do(
     nil
   )
 
-  # Override Visitor methods
+  visitCallExpr := method(expr,
+    callee := self evaluate(expr callee)
+
+    arguments := list()
+    expr arguments foreach(argument,
+      arguments append(argument)
+    )
+
+    if(callee hasProto(LoxCallable) not,
+      RuntimeError with(expr paren, "Can only call functions and classes")
+    )
+
+    function := callee
+    # Make sure the arity is correct
+    if(arguments size != (function arity),
+      RuntimeError with(expr paren,
+        "Expected " .. (function arity) .. " arguments but got " .. (arguments size) .. ".")
+    )
+
+    function doCall(self, arguments)
+  )
+
   visitGroupingExpr := method(expr,
     self evaluate(expr expression)
   )
