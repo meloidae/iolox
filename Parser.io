@@ -255,7 +255,7 @@ Parser := Object clone do(
       right := self unary
       return(Expr Unary with(operator, right))
     )
-    self funCall
+    self doCall
   )
 
   finishCall := method(callee,
@@ -276,7 +276,7 @@ Parser := Object clone do(
   )
 
   # call -> primary ( "(" arguments? ")" )* ;
-  funCall := method(
+  doCall := method(
     expr := self primary
 
     loop(
