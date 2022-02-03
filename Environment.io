@@ -7,8 +7,7 @@ Environment := Object clone do(
     env := self clone
     env setSlot("values", Map with)
     if(call argCount >= 1,
-      enclosingEnv := call evalArgAt(0)
-      env setSlot("enclosing", enclosingEnv)
+      env setSlot("enclosing", call evalArgAt(0))
     )
     return(env)
   )
