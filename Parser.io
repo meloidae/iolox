@@ -45,11 +45,12 @@ Parser := Object clone do(
     ret
   )
 
-  # statement -> exprStmt | forStmt | ifStmt | printStmt | whileStmt | block ;
+  # statement -> exprStmt | forStmt | ifStmt | printStmt | returnStmt | whileStmt | block ;
   statement := method(
     if(self match(TokenType FOR), return(self forStatement))
     if(self match(TokenType IF), return(self ifStatement))
     if(self match(TokenType PRINT), return(self printStatement))
+    if(self match(TokenType RETURN), return(self returnStatement))
     if(self match(TokenType WHILE), return(self whileStatement))
     if(self match(TokenType LEFT_BRACE), return(Stmt Block with(self codeBlock)))
 
@@ -121,6 +122,18 @@ Parser := Object clone do(
     value := self expression
     self consume(TokenType SEMICOLON, "Expect ';' after value.")
     Stmt Print with(value)
+  )
+
+  # returnStmt -> "return" expression? ";" ;
+  returnStatement := method(
+    keyword := self previous
+    value := nil
+    if(self check(TokenType SEMICOLON) not,
+      value = self expression
+    )
+
+    self consume(TokenType SEMICOLON, "Expect ';' after return value.")
+    Stmt Return with(keyword, value)
   )
 
   # varDecl -> "var" IDENTIFIER ( "=" expression )? ";" ;

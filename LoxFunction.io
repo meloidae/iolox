@@ -16,8 +16,17 @@ LoxFunction := LoxCallable clone do(
       environment define(self declaration params at(i) lexeme, arguments at(i))
     )
 
-    # Execute with body with the new environment
-    interpreter executeBlock(self declaration body, environment)
+    ret := nil
+    # Catch any return value as a part of Exception (Return)
+    e := try(
+      # Execute with body with the new environment
+      interpreter executeBlock(self declaration body, environment)
+    )
+    e catch(ReturnValue,
+      ret = e value
+    ) pass
+
+    ret
   )
 
   asString := method(

@@ -83,6 +83,13 @@ Interpreter := Object clone do(
     writeln(self stringify(value))
   )
 
+  visitReturnStmt := method(stmt,
+    value := nil
+    if(stmt value != nil, value = self evaluate(stmt value))
+
+    ReturnValue with(value) raise
+  )
+
   visitVarStmt := method(stmt,
     value := nil # The value is set to nil if it's not explicitly initialized
     if(stmt initializer != nil,
