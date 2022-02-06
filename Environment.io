@@ -9,7 +9,7 @@ Environment := Object clone do(
     if(call argCount >= 1,
       env setSlot("enclosing", call evalArgAt(0))
     )
-    return(env)
+    env
   )
 
   get := method(name,

@@ -50,10 +50,10 @@ Interpreter := Object clone do(
         self execute(statement)
       )
     )
-    e catch(
-      e print
-    )
+    # Reset the environment regardless of error
     self environment = previous
+    # Reraise error if any
+    e pass
   )
 
   # Stmt interface methods
