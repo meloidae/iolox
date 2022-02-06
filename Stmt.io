@@ -5,6 +5,7 @@ Stmt := Object clone do(
     visitFunctionStmt := method(Exception raise("visitFunctionStmt is unimplemented"))
     visitIfStmt := method(Exception raise("visitIfStmt is unimplemented"))
     visitPrintStmt := method(Exception raise("visitPrintStmt is unimplemented"))
+    visitReturnStmt := method(Exception raise("visitReturnStmt is unimplemented"))
     visitVarStmt := method(Exception raise("visitVarStmt is unimplemented"))
     visitWhileStmt := method(Exception raise("visitWhileStmt is unimplemented"))
   )
@@ -77,6 +78,21 @@ Stmt := Object clone do(
 
         t accept = method(visitor,
           visitor visitPrintStmt(self)
+        )
+        t
+      )
+    )
+  )
+  Return := lazySlot(
+    Stmt clone do(
+      with := method(keyword, value,
+        t := self clone
+        t setSlot("stmtType", "Return")
+        t setSlot("keyword", keyword)
+        t setSlot("value", value)
+
+        t accept = method(visitor,
+          visitor visitReturnStmt(self)
         )
         t
       )
