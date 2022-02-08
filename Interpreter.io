@@ -66,7 +66,7 @@ Interpreter := Object clone do(
   )
 
   visitFunctionStmt := method(stmt,
-    function := LoxFunction with(stmt)
+    function := LoxFunction with(stmt, self environment)
     self environment define(stmt name lexeme, function)
   )
 

@@ -1,7 +1,11 @@
 LoxFunction := LoxCallable clone do(
-  with := method(declaration,
+  declartion := nil
+  closure := nil
+
+  with := method(declaration, closure,
     f := self clone
     f setSlot("declaration", declaration)
+    f setSlot("closure", closure)
     f
   )
 
@@ -11,7 +15,7 @@ LoxFunction := LoxCallable clone do(
 
   doCall := method(interpreter, arguments,
     # Store arguments in the newly created environment
-    environment := Environment with(interpreter globals)
+    environment := Environment with(self closure)
     for(i, 0, self declaration params size - 1,
       environment define(self declaration params at(i) lexeme, arguments at(i))
     )
