@@ -18,6 +18,9 @@ Interpreter := Object clone do(
       )
     )
     self environment := self globals
+    # Map for storing variable resolution information
+    # Uses Type_uniqueId as key
+    self locals := Map with
   )
 
   interpret := method(statements,
@@ -39,6 +42,10 @@ Interpreter := Object clone do(
 
   execute := method(stmt,
     stmt accept(self)
+  )
+
+  resolve := method(expr, depth,
+    self locals atPut(LoxUtils uniqueKey(expr), depth)
   )
 
   executeBlock := method(statements, givenEnv,
@@ -108,7 +115,13 @@ Interpreter := Object clone do(
   # Expr interface methods
   visitAssignExpr := method(expr,
     value := self evaluate(expr value)
-    self environment assign(expr name, value)
+
+    distance := self locals at(LoxUtils uniqueKey(expr))
+    if(distance != nil,
+      self environment assignAt(distance, expr name, value),
+      self globals assign(expr name, value)
+    )
+
     value
   )
 
@@ -221,7 +234,15 @@ Interpreter := Object clone do(
   )
 
   visitVariableExpr := method(expr,
-    self environment get(expr name)
+    self lookUpVariable(expr name, expr)
+  )
+
+  lookUpVariable := method(name, expr,
+    distance := self locals at(LoxUtils uniqueKey(expr))
+    if(distance != nil,
+      return(self environment getAt(distance, name lexeme)),
+      return(self globals get(name))
+    )
   )
 
   checkNumberOperand := method(operator, operand,

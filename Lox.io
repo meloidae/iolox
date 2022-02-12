@@ -37,6 +37,12 @@ Lox := Object clone do(
     # Stop if there was a syntax error
     if(self hadError, return)
 
+    resolver := Resolver with(self interpreter)
+    resolver resolve(statements)
+
+    # Stop if there was a resolution error
+    if(self hadError, return)
+
     self interpreter interpret(statements)
   )
   

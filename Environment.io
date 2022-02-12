@@ -44,4 +44,20 @@ Environment := Object clone do(
   define := method(name, value,
     self values atPut(name, value)
   )
+
+  ancestor := method(distance,
+    environment := self
+    for(i, 0, distance - 1,
+      environment = environment enclosing
+    )
+    environment
+  )
+
+  getAt := method(distance, name,
+    self ancestor(distance) values at(name)
+  )
+
+  assignAt := method(distance, name, value,
+    self ancestor(distance) values atPut(name lexeme, value)
+  )
 )

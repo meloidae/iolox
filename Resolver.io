@@ -5,11 +5,19 @@ Resolver := Object clone do(
 
   interpreter := nil
   scopes := nil
+  currentFunction := nil
 
-  with := method(interpreter
+  # local enums
+  FunctionType := Object clone do(
+    NONE := "NONE"
+    FUNCTION := "FUNCTION"
+  )
+
+  with := method(interpreter,
     r := self clone
     r setSlot("interpreter", interpreter)
     r setSlot("scopes", list())
+    r setSlot("currentFunction", FunctionType NONE)
     r
   )
 
@@ -23,18 +31,22 @@ Resolver := Object clone do(
     )
   )
 
-  _resolveStmtOrExpr := method(stmtOrExpr
+  _resolveStmtOrExpr := method(stmtOrExpr,
     stmtOrExpr accept(self)
   )
 
-  resolveFunction := method(function,
+  resolveFunction := method(function, functionType,
+    enclosingFunction := self currentFunction
+    self currentFunction := functionType
+
     self beginScope
     function params foreach(param,
       self declare(param)
       self define(param)
     )
-    self _resolveStmtOrExpr(function body)
+    self _resolveStatements(function body)
     self endScope
+    self currentFunction = enclosingFunction
   )
 
   beginScope := method(
@@ -49,7 +61,11 @@ Resolver := Object clone do(
     if(self scopes isEmpty, return)
 
     # Peek at the top item of stack without removing it
-    scope = self scopes last
+    scope := self scopes last
+    # Provides error on accidental redeclaration in a local scope
+    if(scope hasKey(name lexeme),
+      Lox error(name, "Already a variable with this name in this scope.")
+    )
     # Mark the variable as not initialized
     scope atPut(name lexeme, false)
   )
@@ -63,7 +79,7 @@ Resolver := Object clone do(
   resolveLocal := method(expr, name,
     for(i, self scopes size - 1, 0, -1,
       if(self scopes at(i) hasKey(name lexeme),
-        self interpreter resolve(expr, self scopes - (i + 1))
+        self interpreter resolve(expr, self scopes size - (i + 1))
         return
       )
     )
@@ -91,6 +107,11 @@ Resolver := Object clone do(
   )
 
   visitReturnStmt := method(stmt,
+    # Gives error when return is called in top-level code
+    if(self currentFunction == FunctionType NONE,
+      Lox error(stmt keyword, "Can't return from top-level code.")
+    )
+    
     if(stmt value != nil, self _resolveStmtOrExpr(stmt value))
   )
 
@@ -98,7 +119,7 @@ Resolver := Object clone do(
     self declare(stmt name)
     self define(stmt name)
 
-    self resolveFunction(stmt)
+    self resolveFunction(stmt, FunctionType FUNCTION)
   )
 
   visitVarStmt := method(stmt,

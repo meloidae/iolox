@@ -7,4 +7,8 @@ LoxUtils := Object clone do(
       )
     )
   )
+
+  uniqueKey := method(obj,
+    (obj type) .. "_" .. (obj uniqueId)
+  )
 )
